@@ -23,7 +23,7 @@ const StyleCard: React.FC<StyleCardProps> = ({ styleId, label, icon, isSelected,
       <div className={`text-2xl mb-2 ${isSelected ? 'text-blue-400' : 'text-slate-400'}`}>
         <i className={`fas ${icon}`}></i>
       </div>
-      <span className={`text-xs font-semibold uppercase tracking-wider ${isSelected ? 'text-white' : 'text-slate-400'}`}>
+      <span className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${isSelected ? 'text-white' : 'text-slate-400'}`}>
         {label}
       </span>
     </button>

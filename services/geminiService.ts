@@ -3,9 +3,9 @@ import { GoogleGenAI } from "@google/genai";
 import { LogoGenerationOptions } from "../types";
 
 export const generateLogoImage = async (options: LogoGenerationOptions): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+  // Use process.env.API_KEY directly as per guidelines
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  // Construct a professional logo prompt based on selection
   const styleKeywords: Record<string, string> = {
     minimalist: "clean, flat vector, simple lines, minimalist, modern white background",
     '3d': "3D render, high quality, realistic shadows, depth, ambient occlusion, studio lighting",
@@ -35,6 +35,7 @@ export const generateLogoImage = async (options: LogoGenerationOptions): Promise
 
     let imageUrl = "";
     
+    // Iterate through parts to find the image part, as per guidelines
     if (response.candidates && response.candidates[0].content.parts) {
       for (const part of response.candidates[0].content.parts) {
         if (part.inlineData) {
@@ -45,7 +46,7 @@ export const generateLogoImage = async (options: LogoGenerationOptions): Promise
     }
 
     if (!imageUrl) {
-      throw new Error("No image was generated in the response parts.");
+      throw new Error("Rasm generatsiya qilinmadi.");
     }
 
     return imageUrl;
