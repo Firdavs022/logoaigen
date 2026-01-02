@@ -3,22 +3,22 @@ import { GoogleGenAI } from "@google/genai";
 import { LogoGenerationOptions } from "../types";
 
 export const generateLogoImage = async (options: LogoGenerationOptions): Promise<string> => {
-  // Use process.env.API_KEY directly as per guidelines
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const styleKeywords: Record<string, string> = {
-    minimalist: "clean, flat vector, simple lines, minimalist, modern white background",
-    '3d': "3D render, high quality, realistic shadows, depth, ambient occlusion, studio lighting",
-    vintage: "retro style, distressed texture, classic typography, 1950s aesthetic, badge style",
-    futuristic: "neon accents, cybernetic elements, high tech, glowing, sharp edges, dark background",
-    'hand-drawn': "sketchy, organic lines, charcoal style, artistic, handmade feel, paper texture",
-    gradient: "vibrant colors, smooth transitions, mesh gradient, trendy, glassmorphism elements",
-    luxury: "elegant, gold accents, premium typography, sophisticated, high-end fashion aesthetic"
+    minimalist: "ultra-minimalist, clean lines, geometric, flat vector design, solid background, high contrast, symbol only",
+    '3d': "high-quality 3D render, depth, realistic lighting, octane render, soft shadows, premium feel",
+    vintage: "heritage style, retro badge, classic emblem, distressed texture, 19th century typography",
+    futuristic: "cyberpunk aesthetic, neon glow, sharp tech lines, futuristic font, dark sleek background",
+    'hand-drawn': "hand-crafted illustration, organic lines, artistic sketch, charcoal style, unique textures",
+    gradient: "modern mesh gradient, vibrant liquid colors, glassmorphism elements, trendy soft shadows",
+    luxury: "high-end fashion, gold and silver accents, sophisticated serif typography, elegant minimalist icon"
   };
 
-  const fullPrompt = `Professional logo design: ${options.prompt}. Style: ${styleKeywords[options.style]}. 
-                      Requirements: Centralized composition, solid background, high resolution, 
-                      vector-like quality, distinct icon or wordmark. NO text artifacts unless specified.`;
+  const fullPrompt = `Create a professional high-resolution logo for: ${options.prompt}. 
+                      Style: ${styleKeywords[options.style]}. 
+                      Guidelines: Vector style, centralized icon, no realistic photographic details, 
+                      professional color palette, clear and legible. No messy text.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -28,14 +28,13 @@ export const generateLogoImage = async (options: LogoGenerationOptions): Promise
       },
       config: {
         imageConfig: {
-          aspectRatio: options.aspectRatio,
+          aspectRatio: options.aspectRatio
         }
       },
     });
 
     let imageUrl = "";
     
-    // Iterate through parts to find the image part, as per guidelines
     if (response.candidates && response.candidates[0].content.parts) {
       for (const part of response.candidates[0].content.parts) {
         if (part.inlineData) {
@@ -46,11 +45,11 @@ export const generateLogoImage = async (options: LogoGenerationOptions): Promise
     }
 
     if (!imageUrl) {
-      throw new Error("Rasm generatsiya qilinmadi.");
+      throw new Error("No image data received");
     }
 
     return imageUrl;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Image Generation Error:", error);
     throw error;
   }

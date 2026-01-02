@@ -12,7 +12,6 @@ const TRANSLATIONS = {
     hero: {
       title: 'AI bilan',
       titleHighlight: 'Noyob Logotiplar',
-      // Fixed syntax error: escaped the apostrophe in 'qo\'ying'
       subtitle: 'G\'oyangizni professional brendga aylantiring. Shunchaki tasvirlang, qolganini AIga qo\'ying.',
     },
     form: {
@@ -116,16 +115,6 @@ const App: React.FC = () => {
 
   const t = TRANSLATIONS[lang];
 
-  const STYLES: { id: LogoStyle; icon: string }[] = [
-    { id: 'minimalist', icon: 'fa-vector-square' },
-    { id: '3d', icon: 'fa-cube' },
-    { id: 'gradient', icon: 'fa-fill-drip' },
-    { id: 'luxury', icon: 'fa-gem' },
-    { id: 'vintage', icon: 'fa-stamp' },
-    { id: 'futuristic', icon: 'fa-robot' },
-    { id: 'hand-drawn', icon: 'fa-pen-nib' },
-  ];
-
   useEffect(() => {
     const saved = localStorage.getItem('logo_history');
     if (saved) {
@@ -149,11 +138,11 @@ const App: React.FC = () => {
     localStorage.setItem('app_lang', lang);
   }, [lang]);
 
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  const scrollToSection = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -192,8 +181,8 @@ const App: React.FC = () => {
           element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 500);
-    } catch (err) {
-      setError(lang === 'uz' ? "Xatolik yuz berdi." : lang === 'ru' ? "Произошла ошибка." : "An error occurred.");
+    } catch (err: any) {
+      setError(lang === 'uz' ? "Xatolik yuz berdi. Qayta urinib ko'ring." : lang === 'ru' ? "Произошла ошибка. Попробуйте снова." : "An error occurred. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -223,8 +212,8 @@ const App: React.FC = () => {
             <span className="text-xl font-bold tracking-tight">LogoGenius <span className="text-blue-500">AI</span></span>
           </div>
           
-          <div className="flex items-center space-x-6">
-            <div className="hidden md:flex space-x-6 text-sm font-medium text-slate-400">
+          <div className="flex items-center space-x-3 md:space-x-6">
+            <div className="hidden md:flex space-x-6 text-sm font-medium text-slate-400 mr-4">
               <a href="#generator" onClick={(e) => scrollToSection(e, 'generator')} className="hover:text-white transition">{t.nav.generator}</a>
               <a href="#gallery" onClick={(e) => scrollToSection(e, 'gallery')} className="hover:text-white transition">{t.nav.gallery}</a>
             </div>
@@ -234,7 +223,7 @@ const App: React.FC = () => {
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase transition-all ${
+                  className={`px-2 md:px-3 py-1 rounded-md text-[10px] font-bold uppercase transition-all ${
                     lang === l ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
                   }`}
                 >
@@ -249,7 +238,7 @@ const App: React.FC = () => {
       <main id="generator" className="container mx-auto px-6 mt-12 scroll-mt-24">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
-            {t.hero.title} <span className="gradient-text">{t.hero.titleHighlight}</span> <br /> 
+            {t.hero.title} <span className="gradient-text">{t.hero.titleHighlight}</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
             {t.hero.subtitle}
@@ -257,24 +246,32 @@ const App: React.FC = () => {
         </div>
 
         <div className="max-w-4xl mx-auto glass p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-          <div className="mb-8">
-            <label className="block text-slate-300 text-sm font-bold mb-4 uppercase tracking-widest text-left">{t.form.styleLabel}</label>
+          <div className="mb-8 text-left">
+            <label className="block text-slate-300 text-sm font-bold mb-4 uppercase tracking-widest">{t.form.styleLabel}</label>
             <div className="grid grid-cols-3 md:grid-cols-7 gap-3">
-              {STYLES.map(style => (
+              {(['minimalist', '3d', 'gradient', 'luxury', 'vintage', 'futuristic', 'hand-drawn'] as LogoStyle[]).map(styleId => (
                 <StyleCard 
-                  key={style.id} 
-                  styleId={style.id} 
-                  label={t.styles[style.id]} 
-                  icon={style.icon} 
-                  isSelected={selectedStyle === style.id} 
+                  key={styleId} 
+                  styleId={styleId} 
+                  label={t.styles[styleId]} 
+                  icon={
+                    styleId === 'minimalist' ? 'fa-vector-square' :
+                    styleId === '3d' ? 'fa-cube' :
+                    styleId === 'gradient' ? 'fa-fill-drip' :
+                    styleId === 'luxury' ? 'fa-gem' :
+                    styleId === 'vintage' ? 'fa-stamp' :
+                    styleId === 'futuristic' ? 'fa-robot' :
+                    'fa-pen-nib'
+                  } 
+                  isSelected={selectedStyle === styleId} 
                   onSelect={setSelectedStyle} 
                 />
               ))}
             </div>
           </div>
 
-          <div className="mb-8">
-            <label className="block text-slate-300 text-sm font-bold mb-4 uppercase tracking-widest text-left">{t.form.promptLabel}</label>
+          <div className="mb-8 text-left">
+            <label className="block text-slate-300 text-sm font-bold mb-4 uppercase tracking-widest">{t.form.promptLabel}</label>
             <div className="relative gradient-border">
               <textarea
                 value={prompt}
@@ -301,15 +298,16 @@ const App: React.FC = () => {
         {isGenerating && (
           <div className="mt-12 flex flex-col items-center">
              <div className="w-64 h-64 rounded-2xl bg-slate-800 animate-pulse flex items-center justify-center border border-slate-700">
-                <i className="fas fa-image text-slate-600 text-4xl"></i>
+                <i className="fas fa-palette text-slate-600 text-4xl animate-bounce"></i>
              </div>
+             <p className="mt-4 text-slate-500 animate-pulse italic">AI logotipni chizmoqda, iltimos kuting...</p>
           </div>
         )}
 
         <div id="gallery" className="scroll-mt-24 mt-20">
           {history.length > 0 ? (
             <div>
-              <div className="flex justify-between items-end mb-8">
+              <div className="flex justify-between items-end mb-8 text-left">
                 <div>
                   <h2 className="text-3xl font-bold">{t.gallery.title}</h2>
                   <p className="text-slate-500">{t.gallery.subtitle}</p>
@@ -329,6 +327,7 @@ const App: React.FC = () => {
                           <button onClick={() => handleDownload(logo.url)} className="bg-white text-black p-3 rounded-full hover:bg-blue-400 hover:text-white transition transform hover:scale-110"><i className="fas fa-download"></i></button>
                           <button onClick={() => removeLogo(logo.id)} className="bg-red-500/20 text-red-400 p-3 rounded-full hover:bg-red-500 hover:text-white transition transform hover:scale-110"><i className="fas fa-trash"></i></button>
                         </div>
+                        <p className="text-white text-xs text-center line-clamp-2 px-4 italic">"{logo.prompt}"</p>
                       </div>
                     </div>
                     <div className="p-5 flex justify-between items-center bg-slate-800/30">
@@ -352,7 +351,12 @@ const App: React.FC = () => {
       </main>
 
       <footer className="mt-20 border-t border-slate-800 py-12 text-center text-slate-500">
-        <p className="text-sm">&copy; 2025 LogoGenius AI.</p>
+        <div className="flex justify-center space-x-6 mb-4">
+           <i className="fab fa-twitter hover:text-blue-400 cursor-pointer transition"></i>
+           <i className="fab fa-discord hover:text-blue-500 cursor-pointer transition"></i>
+           <i className="fab fa-github hover:text-white cursor-pointer transition"></i>
+        </div>
+        <p className="text-sm">&copy; 2025 LogoGenius AI. Barcha huquqlar himoyalangan.</p>
       </footer>
     </div>
   );
